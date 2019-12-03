@@ -19,6 +19,19 @@ class App extends React.Component {
     };
   }
 
+  updateProduct(product) {
+    product.id = this.state.items.length+1;
+    this.setState({
+      items: [...this.state.items,product]
+    });
+  }
+
+  updateProductAfterDelete(id) {
+    this.setState({
+      items: this.state.items.filter(prod => prod.id !== +id)
+    });
+  }
+
   componentDidMount() {
     fetch("http://localhost:3004/products")
       .then(res => res.json())
@@ -52,9 +65,11 @@ class App extends React.Component {
           <hr className='w-100' />
           <Switch>
             <Route exact path="/">
-              <Main products={this.state.items}/>
+              <Main products={this.state.items} onUpdate={i => this.updateProductAfterDelete(i)}/>
             </Route>
-            <Route path="/new-product" component={NewProduct}></Route>
+            <Route path="/new-product">
+              <NewProduct onUpdate={i => this.updateProduct(i)}/>
+            </Route>
           </Switch>
         </BrowserRouter>
 

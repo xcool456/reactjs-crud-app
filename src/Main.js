@@ -10,7 +10,7 @@ class Main extends React.Component {
 
     deleteProduct(e) {
         const id = e.target.value;
-        fetch(`http://localhost:3004/products/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }}).then(()=>  window.location.reload(false));
+        fetch(`http://localhost:3004/products/${id}`, { method: 'DELETE', headers: { 'Content-Type': 'application/json' }}).then(()=>this.props.onUpdate(id));
     }
 
     render() {
