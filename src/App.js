@@ -2,6 +2,7 @@
 import React from 'react';
 import Main from './Main';
 import NewProduct from './NewProduct';
+import ProductView from './ProductView';
 
 import {
   BrowserRouter,
@@ -20,9 +21,9 @@ class App extends React.Component {
   }
 
   updateProduct(product) {
-    product.id = this.state.items.length+1;
+    product.id = this.state.items.length + 1;
     this.setState({
-      items: [...this.state.items,product]
+      items: [...this.state.items, product]
     });
   }
 
@@ -65,10 +66,13 @@ class App extends React.Component {
           <hr className='w-100' />
           <Switch>
             <Route exact path="/">
-              <Main products={this.state.items} onUpdate={i => this.updateProductAfterDelete(i)}/>
+              <Main products={this.state.items} onUpdate={i => this.updateProductAfterDelete(i)} />
             </Route>
             <Route path="/new-product">
-              <NewProduct onUpdate={i => this.updateProduct(i)}/>
+              <NewProduct onUpdate={i => this.updateProduct(i)} />
+            </Route>
+            <Route path="/product-view/:id">
+              <ProductView products={this.state.items} />
             </Route>
           </Switch>
         </BrowserRouter>
