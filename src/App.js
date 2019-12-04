@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import React from 'react';
 import Main from './Main';
 import NewProduct from './NewProduct';
@@ -7,7 +6,8 @@ import ProductView from './ProductView';
 import {
   BrowserRouter,
   Switch,
-  Route
+  Route,
+  Link
 } from "react-router-dom";
 
 class App extends React.Component {
@@ -23,7 +23,7 @@ class App extends React.Component {
   updateProductAfterEdit(product) {
     this.setState({
       items: this.state.items.map(prod => {
-        if(+prod.id === +product.id) {
+        if (+prod.id === +product.id) {
           return product;
         }
         return prod;
@@ -73,8 +73,15 @@ class App extends React.Component {
     } else {
       return (
         <BrowserRouter>
-          <h1 className="pl-5">CRUD application</h1>
-          <hr className='w-100' />
+          <div className='container'>
+            <div className="row">
+              <Link to='/'>
+                <img src=".\logo192.png" style={{ width: 75 + 'px' }} alt="Logo" />
+              </Link>
+              <h1 className="align-self-end">React CRUD application</h1>
+              <hr className='w-100' />
+            </div>
+          </div>
           <Switch>
             <Route exact path="/">
               <Main products={this.state.items} onUpdate={i => this.updateProductAfterDelete(i)} />
