@@ -20,7 +20,18 @@ class App extends React.Component {
     };
   }
 
-  updateProduct(product) {
+  updateProductAfterEdit(product) {
+    this.setState({
+      items: this.state.items.map(prod => {
+        if(+prod.id === +product.id) {
+          return product;
+        }
+        return prod;
+      })
+    });
+  }
+
+  updateProductAfterAdd(product) {
     product.id = this.state.items.length + 1;
     this.setState({
       items: [...this.state.items, product]
@@ -68,12 +79,19 @@ class App extends React.Component {
             <Route exact path="/">
               <Main products={this.state.items} onUpdate={i => this.updateProductAfterDelete(i)} />
             </Route>
-            <Route path="/new-product">
-              <NewProduct onUpdate={i => this.updateProduct(i)} />
-            </Route>
-            <Route path="/product-view/:id">
-              <ProductView products={this.state.items} />
-            </Route>
+            <Route path="/new-product" render={({ location }) => (
+              <NewProduct
+                onUpdateAdd={i => this.updateProductAfterAdd(i)}
+                onUpdateEdit={i => this.updateProductAfterEdit(i)}
+                location={location.search}
+              />
+            )} />
+            <Route path="/product-view/:id" render={({ match }) => (
+              <ProductView
+                products={this.state.items}
+                id={match.params.id}
+              />
+            )} />
           </Switch>
         </BrowserRouter>
 

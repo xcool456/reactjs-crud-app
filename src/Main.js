@@ -34,14 +34,14 @@ class Main extends React.Component {
                     {this.props.products.map((product, i) => (
                         <div className="row" key={i}>
                             <div className="col-2">
-                    <Link to={{ pathname: "/product-view/"+i }}>{product.name}</Link>
+                                <Link to={{ pathname: `/product-view/${product.id}` }}>{product.name}</Link>
                             </div>
                             <div className="col">{product.description}</div>
                             <div className="col-2">
                                 {product.price}
                             </div>
                             <div className="col-3 text-white">
-                                <Link to={{ pathname: '/new-product', search: '?name=' + product.name + '&description=' + product.description + '&price=' + product.price + '&id=' + product.id }} className="btn btn-warning btn-sm mx-1 px-2 py-0">Edit</Link>
+                                <Link to={{ pathname: '/new-product', search: `?name=${product.name}&description=${product.description}&price=${product.price}&id=${product.id}` }} className="btn btn-warning btn-sm mx-1 px-2 py-0">Edit</Link>
                                 <button className="btn btn-danger btn-sm px-0 py-0" value={product.id} onClick={this.deleteProduct}>Delete</button>
                             </div>
                             <hr className='w-100' />
