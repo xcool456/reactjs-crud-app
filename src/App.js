@@ -20,6 +20,25 @@ class App extends React.Component {
     };
   }
 
+  getProducts() {
+    fetch("http://localhost:3004/products")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            items: result
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
   updateProductAfterEdit(product) {
     this.setState({
       items: this.state.items.map(prod => {
@@ -31,13 +50,6 @@ class App extends React.Component {
     });
   }
 
-  updateProductAfterAdd(product) {
-    product.id = this.state.items.length + 1;
-    this.setState({
-      items: [...this.state.items, product]
-    });
-  }
-
   updateProductAfterDelete(id) {
     this.setState({
       items: this.state.items.filter(prod => prod.id !== +id)
@@ -45,24 +57,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:3004/products")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            isLoaded: true,
-            items: result
-          });
-        },
-        // Примечание: важно обрабатывать ошибки именно здесь, а не в блоке catch(),
-        // чтобы не перехватывать исключения из ошибок в самих компонентах.
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+    this.getProducts();
   }
 
   render() {
@@ -88,7 +83,7 @@ class App extends React.Component {
             </Route>
             <Route path="/new-product" render={({ location }) => (
               <NewProduct
-                onUpdateAdd={i => this.updateProductAfterAdd(i)}
+                onUpdateAdd={i => this.getProducts()}
                 onUpdateEdit={i => this.updateProductAfterEdit(i)}
                 location={location.search}
               />

@@ -17,8 +17,7 @@ class Main extends React.Component {
     }
 
     handleChange(event) {
-        const name = event.target.name;
-        const value = event.target.value;
+        const { name, value } = event.target;
 
         this.setState({
             [name]: value
@@ -32,25 +31,25 @@ class Main extends React.Component {
                 <Link to='/new-product' className="btn btn-secondary">Add new product</Link>
                 <div className="row">
                     <div className="col-3 my-3 font-weight-bold">
-                        <label>Product name</label>
+                        <label htmlFor="search-element">Product name</label>
                         <input className="form-control" id="search-element" onChange={this.handleChange} name="name" value={this.state.name} />
                     </div>
                 </div>
                 <div className="container">
                     <div className="row font-weight-bold">
-                        <div className="col-2">Name</div>
+                        <div className="col-md-2">Name</div>
                         <div className="col">Description</div>
-                        <div className="col-2">Price</div>
+                        <div className="col-sm-2">Price</div>
                         <div className="col-3">Actions</div>
                         <hr className='w-100' />
                     </div>
                     {products.map((product, i) => (
                         <div className="row" key={i}>
-                            <div className="col-2">
+                            <div className="col-md-2">
                                 <Link to={{ pathname: `/product-view/${product.id}` }}>{product.name}</Link>
                             </div>
                             <div className="col">{product.description}</div>
-                            <div className="col-2">
+                            <div className="col-sm-2">
                                 {product.price}
                             </div>
                             <div className="col-3">
