@@ -21,11 +21,9 @@ class NewProduct extends React.Component {
     createProduct() {
         if (this.props.location) {
             const id = new URLSearchParams(this.props.location).get("id");
-            let product = this.state.formControls
-            product.id = id;
-            fetch("http://localhost:3004/products/" + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product) }).then(() => this.props.onUpdateEdit(this.state.formControls));
+            fetch("http://localhost:3004/products/" + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(this.state.formControls) }).then(() => this.props.onUpdate());
         } else {
-            fetch("http://localhost:3004/products", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(this.state.formControls) }).then(() => this.props.onUpdateAdd());
+            fetch("http://localhost:3004/products", { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(this.state.formControls) }).then(() => this.props.onUpdate());
         }
     }
 

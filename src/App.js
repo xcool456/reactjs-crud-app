@@ -39,17 +39,6 @@ class App extends React.Component {
       )
   }
 
-  updateProductAfterEdit(product) {
-    this.setState({
-      items: this.state.items.map(prod => {
-        if (+prod.id === +product.id) {
-          return product;
-        }
-        return prod;
-      })
-    });
-  }
-
   updateProductAfterDelete(id) {
     this.setState({
       items: this.state.items.filter(prod => prod.id !== +id)
@@ -83,8 +72,7 @@ class App extends React.Component {
             </Route>
             <Route path="/new-product" render={({ location }) => (
               <NewProduct
-                onUpdateAdd={i => this.getProducts()}
-                onUpdateEdit={i => this.updateProductAfterEdit(i)}
+                onUpdate={i => this.getProducts()}
                 location={location.search}
               />
             )} />
