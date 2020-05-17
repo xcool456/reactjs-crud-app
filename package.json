@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "body-parser": "^1.19.0",
     "bootstrap": "^4.4.0",
     "concurrently": "^5.0.0",
     "cors": "^2.8.5",
@@ -11,9 +12,11 @@
     "express-nedb-rest": "^1.2.6",
     "json-server": "^0.15.1",
     "nedb": "^1.8.0",
+    "nodemailer": "^6.4.6",
     "prettier": "^2.0.5",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
+    "react-countdown-now": "^2.1.2",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0"

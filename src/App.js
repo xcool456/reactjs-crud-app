@@ -7,6 +7,8 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import MainMenu from './main/MainMenu';
 import TestWindow from './main/TestWindow';
 import FinishTest from './main/FinishWindow';
+import Settings from './edit-tests/Settings';
+import EditSettings from './edit-tests/EditSettings';
 
 class App extends React.Component {
     constructor(props) {
@@ -16,7 +18,9 @@ class App extends React.Component {
             isLoaded: false,
             items: [],
             selectedQuestions: [],
-            countOfQuestions: 10
+            countOfQuestions: 10,
+            date: '',
+            settings: {},
         };
     }
 
@@ -39,6 +43,35 @@ class App extends React.Component {
             )
             .then(() => this.generateQuiz());
     }
+
+    getSettings = () => {
+        fetch('http://localhost:8080/settings')
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    for (let i = 0; i < result.length; i++) {
+                        this.setState({
+                            isLoaded: true,
+                            settings: {
+                                ...this.state.settings,
+                                [result[i].name]: {
+                                    id: result[i]._id,
+                                    value: result[i].value,
+                                    text: result[i].text,
+                                },
+                            },
+                        });
+                    }
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error,
+                    });
+                }
+            )
+            .then(() => this.generateQuiz());
+    };
 
     generateQuiz = (amount = 10, questionList = this.state.items) => {
         let usedQuestions = [];
@@ -69,6 +102,12 @@ class App extends React.Component {
 
     componentDidMount() {
         this.getDb();
+        this.getSettings();
+        // fetch("http://localhost:8080/settings", {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({name: "password",value:"admin1",text:"Пароль администратора"}),
+        // })
     }
 
     render() {
@@ -85,13 +124,17 @@ class App extends React.Component {
                         </Route>
                         <Route
                             path="/test/:id"
-                            render={({ match }) => (
+                            render={({ match, location }) => (
                                 <TestWindow
                                     id={match.params.id}
                                     selectedQuestions={
                                         this.state.selectedQuestions
                                     }
-                                    countOfQuestions={this.state.countOfQuestions}
+                                    countOfQuestions={
+                                        this.state.countOfQuestions
+                                    }
+                                    location={location.search}
+                                    settings={this.state.settings}
                                 />
                             )}
                         />
@@ -99,6 +142,18 @@ class App extends React.Component {
                             path="/finish"
                             render={({ location }) => (
                                 <FinishTest location={location.search} />
+                            )}
+                        />
+                        <Route
+                            path="/settings"
+                            render={({ location }) => (
+                                <Settings settings={this.state.settings} />
+                            )}
+                        />
+                        <Route
+                            path="/edit-settings"
+                            render={({ location }) => (
+                                <EditSettings onUpdate={() => this.getSettings()} location={location.search} />
                             )}
                         />
                         <div className="questions-edit">

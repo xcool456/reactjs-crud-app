@@ -1,6 +1,9 @@
 import React from 'react';
 import './TestWindow.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Countdown from 'react-countdown-now';
 
 class TestWindow extends React.Component {
     constructor(props) {
@@ -8,9 +11,12 @@ class TestWindow extends React.Component {
         this.state = {
             selectedOption: '',
             studentAnswers: {},
+            show: false,
+            date: +new URLSearchParams(this.props.location).get("date")
         };
     }
 
+    //user score
     getScore = () => {
         let userScore = 0;
         for (let i = 0; i < this.props.selectedQuestions.length; i++) {
@@ -24,6 +30,7 @@ class TestWindow extends React.Component {
         return userScore;
     };
 
+    //handle answer
     handleOptionChange = (changeEvent) => {
         this.setState({
             selectedOption: changeEvent.target.value,
@@ -34,25 +41,60 @@ class TestWindow extends React.Component {
         });
     };
 
-    componentDidUpdate(prevProps,prevState) {
-        console.log(1);
+    //save answers
+    componentDidUpdate(prevProps, prevState) {
         if (prevProps.id !== this.props.id) {
             this.setState({
-                selectedOption: `${prevState.studentAnswers.hasOwnProperty(this.props.id)   ? prevState.studentAnswers[this.props.id]  : "" }`,
+                selectedOption: `${
+                    prevState.studentAnswers.hasOwnProperty(this.props.id)
+                        ? prevState.studentAnswers[this.props.id]
+                        : ''
+                }`,
             });
         }
     }
 
+    //modal window
+    handleClose = () =>
+        this.setState({
+            show: false,
+        });
+
+    handleShow = () =>
+        this.setState({
+            show: true,
+        });
+
     render() {
-        console.log(this.state);
-        console.log(this.props);
         return (
             <div className="container">
+                <div className="d-flex">
+                    <div id="question-number">
+                        Вопрос {+this.props.id + 1} из{' '}
+                        {this.props.countOfQuestions}{' '}
+                    </div>
+                    <div id="timer">
+                        Время:
+                        <Countdown
+                            date={this.state.date + +this.props.settings.time.value}
+
+                        >
+                            <Redirect
+                                to={{
+                                pathname: `/finish`,
+                                search: `?rightAnswers=${this.getScore()}&countOfQuestion=${
+                                    this.props.countOfQuestions
+                                }&time=${this.state.date}`,
+                            }}
+                            />
+                        </Countdown>
+                    </div>
+                </div>
                 <div id="question-area">
                     <div id="question">
                         {this.props.selectedQuestions[this.props.id].question}
                     </div>
-                    <pre>
+                    <pre style={{"background-color": "rgb(245, 242, 240)"}}>
                         <code id="code">
                             {this.props.selectedQuestions[this.props.id].code}
                         </code>
@@ -141,10 +183,12 @@ class TestWindow extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className="row justify-content-center">
+                <div className="row test-button">
                     <Link
                         id="send-button"
-                        className="btn btn-danger col-2"
+                        className={`btn btn-danger col-1 ${
+                            this.props.id == 0 && 'disabled'
+                        }`}
                         to={
                             this.props.id - 1 >= 0 && {
                                 pathname: `/test/${+this.props.id - 1}`,
@@ -153,25 +197,12 @@ class TestWindow extends React.Component {
                     >
                         Назад
                     </Link>
-                </div>
-                <div className="row justify-content-center">
                     <Link
                         id="send-button"
-                        className="btn btn-warning col-2"
-                        to={{
-                            pathname: `/finish`,
-                            search: `?rightAnswers=${this.getScore()}&countOfQuestion=${
-                                this.props.countOfQuestions
-                            }`,
-                        }}
-                    >
-                        Отправить
-                    </Link>
-                </div>
-                <div className="row justify-content-center">
-                    <Link
-                        id="send-button"
-                        className="btn btn-success col-2"
+                        className={`btn btn-success col-1 ${
+                            this.props.id == this.props.countOfQuestions - 1 &&
+                            'disabled'
+                        }`}
                         to={
                             this.props.id < this.props.countOfQuestions - 1 && {
                                 pathname: `/test/${+this.props.id + 1}`,
@@ -180,6 +211,44 @@ class TestWindow extends React.Component {
                     >
                         Вперед
                     </Link>
+                    <Button
+                        id="send-button"
+                        className="btn btn-warning col-2 offset-8"
+                        onClick={this.handleShow}
+                    >
+                        Закончить тест
+                    </Button>
+
+                    <Modal show={this.state.show} onHide={this.handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                Подтверждение об окончании теста
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            Вы уверены, что хотите закончить тест?
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button
+                                variant="secondary"
+                                onClick={this.handleClose}
+                            >
+                                Закрыть окно
+                            </Button>
+                            <Link
+                                className="btn btn-primary"
+                                onClick={this.handleClose}
+                                to={{
+                                    pathname: `/finish`,
+                                    search: `?rightAnswers=${this.getScore()}&countOfQuestion=${
+                                        this.props.countOfQuestions
+                                    }&time=${this.state.date}`,
+                                }}
+                            >
+                                Закончить тест
+                            </Link>
+                        </Modal.Footer>
+                    </Modal>
                 </div>
             </div>
         );

@@ -1,16 +1,8 @@
 #question-area {
-    margin: 5%;
+
     border: 3px solid #eee;
     border-radius: 10px;
     padding: 30px;
-}
-
-.send-button {
-    margin-top: 5%;
-}
-
-#send-button {
-    width: 50%;
 }
 
 .answer input:checked + label {
@@ -20,4 +12,18 @@
 .answer-label {
     padding: 4px 8px 4px 8px;
     cursor: pointer;
+}
+
+.test-button {
+    margin-left:  0 !important;
+    margin-right: 0 !important;
+}
+
+#question-number{
+    font-weight: bold;
+    text-align: center;
+}
+
+#question-number{
+    flex:auto;
 }

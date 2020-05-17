@@ -5,36 +5,18 @@ class MainMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            formControls: {
-                fio: '',
-                group: '',
-                teacher: '',
-            },
+            fio: '',
+            group: '',
+            teacher: '1',
         };
         this.handleChange = this.handleChange.bind(this);
     }
 
     handleChange(event) {
         const { name, value } = event.target;
-
-        if (name.indexOf('answer') !== -1) {
-            this.setState({
-                formControls: {
-                    ...this.state.formControls,
-                    answers: {
-                        ...this.state.formControls.answers,
-                        [name]: value,
-                    },
-                },
-            });
-        } else {
-            this.setState({
-                formControls: {
-                    ...this.state.formControls,
-                    [name]: value,
-                },
-            });
-        }
+        this.setState({
+            [name]: value,
+        });
     }
 
     render() {
@@ -47,7 +29,8 @@ class MainMenu extends React.Component {
                             className="form-control"
                             id="fio"
                             name="fio"
-                            value={this.state.formControls.fio}
+                            onChange={this.handleChange}
+                            value={this.state.fio}
                         />
                     </div>
                 </div>
@@ -58,7 +41,8 @@ class MainMenu extends React.Component {
                             className="form-control"
                             id="group"
                             name="group"
-                            value={this.state.formControls.group}
+                            onChange={this.handleChange}
+                            value={this.state.group}
                         />
                     </div>
                 </div>
@@ -75,11 +59,26 @@ class MainMenu extends React.Component {
                 </div>
                 <div className="row my-2">
                     <div className="col-2">
-                        <Link to="/test/0" className='btn btn-primary'>
+                        <Link
+                            to={{
+                                pathname: `/test/0`,
+                                search: `?date=${Date.now()}`,
+                            }}
+                            className={`btn btn-primary ${
+                                (this.state.fio &&
+                                    this.state.group &&
+                                    this.state.group) ||
+                                'disabled'
+                            }`}
+                        >
                             Начать тест
                         </Link>
                     </div>
-                    <div className="col-2">
+                    <div className="btn-group  offset-6" role="group">
+                        <Link to="/settings" className="btn btn-secondary">
+                            Настройка приложения
+                        </Link>
+
                         <Link to="/questions" className="btn btn-secondary">
                             Настройка тестов
                         </Link>
