@@ -18,7 +18,6 @@ class App extends React.Component {
             isLoaded: false,
             items: [],
             selectedQuestions: [],
-            countOfQuestions: 10,
             date: '',
             settings: {},
         };
@@ -41,7 +40,6 @@ class App extends React.Component {
                     });
                 }
             )
-            .then(() => this.generateQuiz());
     }
 
     getSettings = () => {
@@ -70,7 +68,7 @@ class App extends React.Component {
                     });
                 }
             )
-            .then(() => this.generateQuiz());
+            .then(() => this.generateQuiz(this.state.settings.countOfQuestion.value));
     };
 
     generateQuiz = (amount = 10, questionList = this.state.items) => {
@@ -103,10 +101,17 @@ class App extends React.Component {
     componentDidMount() {
         this.getDb();
         this.getSettings();
+
+
         // fetch("http://localhost:8080/settings", {
         //     method: "POST",
         //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({name: "password",value:"admin1",text:"Пароль администратора"}),
+        //     body: JSON.stringify({name: "teacher",value:"10",text:"Иванов Иван Иванович"}),
+        // })
+
+        // fetch("http://localhost:8080/settings/dZzzOuB2FRJ54MCb", {
+        //     method: "DELETE",
+        //
         // })
     }
 
@@ -120,7 +125,7 @@ class App extends React.Component {
                 <BrowserRouter>
                     <Switch>
                         <Route exact path="/">
-                            <MainMenu items={this.state.items} />
+                            <MainMenu items={this.state.items} settings={this.state.settings}/>
                         </Route>
                         <Route
                             path="/test/:id"
@@ -131,7 +136,7 @@ class App extends React.Component {
                                         this.state.selectedQuestions
                                     }
                                     countOfQuestions={
-                                        this.state.countOfQuestions
+                                        this.state.settings.countOfQuestion.value
                                     }
                                     location={location.search}
                                     settings={this.state.settings}

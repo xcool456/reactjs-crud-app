@@ -12,7 +12,10 @@ class TestWindow extends React.Component {
             selectedOption: '',
             studentAnswers: {},
             show: false,
-            date: +new URLSearchParams(this.props.location).get("date")
+            date: +new URLSearchParams(this.props.location).get("date"),
+            fio: new URLSearchParams(this.props.location).get("fio"),
+            group: new URLSearchParams(this.props.location).get("group"),
+            teacher: new URLSearchParams(this.props.location).get("teacher")
         };
     }
 
@@ -84,7 +87,7 @@ class TestWindow extends React.Component {
                                 pathname: `/finish`,
                                 search: `?rightAnswers=${this.getScore()}&countOfQuestion=${
                                     this.props.countOfQuestions
-                                }&time=${this.state.date}`,
+                                }&time=${this.state.date}&fio=${this.state.fio}&group=${this.state.group}&teacher=${this.state.teacher}`,
                             }}
                             />
                         </Countdown>
@@ -242,7 +245,7 @@ class TestWindow extends React.Component {
                                     pathname: `/finish`,
                                     search: `?rightAnswers=${this.getScore()}&countOfQuestion=${
                                         this.props.countOfQuestions
-                                    }&time=${this.state.date}`,
+                                    }&time=${this.state.date}&fio=${this.state.fio}&group=${this.state.group}&teacher=${this.state.teacher}`,
                                 }}
                             >
                                 Закончить тест

@@ -27,3 +27,15 @@
 #question-number{
     flex:auto;
 }
+
+.menu {
+    margin-top: 15%;
+}
+
+.finish-window {
+    margin-top: 15% !important;
+}
+
+.setting-button {
+    margin-left: 65%;
+}

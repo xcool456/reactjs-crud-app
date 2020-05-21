@@ -69,7 +69,7 @@ restApi.addDatastore('settings', datastore2);
 oApp.use('/', restApi);
 
 oApp.listen(8080, function () {
-    console.log('you may use nedb rest api at port 8080');
+    console.log('Nedb rest api on port 8080');
 });
 
 var mail = express();
@@ -77,7 +77,7 @@ mail.use(cors())
 mail.use(bodyParser());
 const nodemailer = require('nodemailer');
 
-async function main() {
+async function main(data) {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
         service: "gmail",
@@ -89,22 +89,20 @@ async function main() {
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-        from: 'Тест 👥 <foo@blurdybloop.com>',
-        to: "andrei-shilec@mail.ru", // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
+        from: `${data.fio} 👥 <foo>`,
+        to: `${data.teacher}`, // list of receivers
+        subject: "Тест ✔", // Subject line
+        text: `ФИО:${data.fio}\nГруппа:${data.group}\nКоличесиво баллов:${data.score}/${data.countOfQuestion}(${data.percent})\nПотрачено времени:${data.time}`, // plain text body
     });
-    console.log(info)
 }
 
 
 
 mail.post('/', function (req, res) {
-    console.log(req.body)
-    main().then(()=>console.log('success')).catch(console.error);
+    main(req.body).catch(console.error);
     res.status(200).send('success')
 });
 
 mail.listen(8888, function () {
-    console.log('Example app listening on port 8888!');
+    console.log('Nodemailer on port 8888!');
 });

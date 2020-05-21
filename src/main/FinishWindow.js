@@ -1,31 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
+import './TestWindow.css';
 
 class FinishTest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            rightAnswers: '',
-            countOfQuestion: '',
-            time:""
+            rightAnswers: new URLSearchParams(this.props.location).get(
+                'rightAnswers'
+            ),
+            countOfQuestion: new URLSearchParams(this.props.location).get(
+                'countOfQuestion'
+            ),
+            time: new URLSearchParams(this.props.location).get('time'),
+            fio: new URLSearchParams(this.props.location).get('fio'),
+            group: new URLSearchParams(this.props.location).get('group'),
+            teacher: new URLSearchParams(this.props.location).get('teacher'),
         };
-    }
-
-    componentDidMount() {
-        if (this.props.location) {
-            this.setState({
-                rightAnswers: new URLSearchParams(this.props.location).get(
-                    'rightAnswers'
-                ),
-                countOfQuestion: new URLSearchParams(this.props.location).get(
-                    'countOfQuestion'
-                ),
-                time: new URLSearchParams(this.props.location).get(
-                    'time'
-                ),
-            });
-        }
     }
 
     sendAnswers = () => {
@@ -35,32 +26,70 @@ class FinishTest extends React.Component {
             body: JSON.stringify({
                 score: this.state.rightAnswers,
                 countOfQuestion: this.state.countOfQuestion,
+                fio: this.state.fio,
+                group: this.state.group,
+                teacher: this.state.teacher,
+                percent:
+                    Math.round(
+                        (this.state.rightAnswers / this.state.countOfQuestion) *
+                            100
+                    ).toString() + '%',
+                time:
+                    Math.floor((Date.now() - this.state.time) / 60000) +
+                    ':' +
+                    ((((Date.now() - this.state.time) % 60000) / 1000).toFixed(
+                        0
+                    ) < 10
+                        ? '0'
+                        : '') +
+                    (((Date.now() - this.state.time) % 60000) / 1000).toFixed(
+                        0
+                    ),
             }),
         }).then((e) => console.log(e));
     };
 
+    componentDidMount() {
+        // this.sendAnswers();
+    }
+
     render() {
+        console.log(this.state);
         return (
-            <div className="container text-center">
+            <div className="container text-center finish-window">
                 <nav>
                     <h1>Тест был завершен.</h1>
+                    <br></br>
                 </nav>
-                <h1 id="result">
-                    Ваш результат: {Math.round((this.state.rightAnswers / this.state.countOfQuestion * 100)).toString() + '%'}
-                </h1>
-                <h1 id="correct-answers">
+                <h2 id="result">
+                    Ваш результат:{' '}
+                    {Math.round(
+                        (this.state.rightAnswers / this.state.countOfQuestion) *
+                            100
+                    ).toString() + '%'}
+                </h2>
+                <h2 id="correct-answers">
                     Правильные ответы: {this.state.rightAnswers}/
                     {this.state.countOfQuestion}
-                </h1>
-                <h1 id="time-elapsed">Времени потрачено: {Math.floor((Date.now() - this.state.time) / 60000) + ":" + ((((Date.now() - this.state.time) % 60000) / 1000).toFixed(0) < 10 ? '0' : '') + (((Date.now() - this.state.time) % 60000) / 1000).toFixed(0)}</h1>
-                <Link to="/">Назад к списку вопросов</Link>
-                <Button
-                    id="send-button"
-                    className="btn btn-warning col-2"
-                    onClick={this.sendAnswers}
-                >
-                    Закончить тест
-                </Button>
+                </h2>
+                <h2 id="time-elapsed">
+                    Времени потрачено:{' '}
+                    {Math.floor((Date.now() - this.state.time) / 60000) +
+                        ':' +
+                        ((
+                            ((Date.now() - this.state.time) % 60000) /
+                            1000
+                        ).toFixed(0) < 10
+                            ? '0'
+                            : '') +
+                        (
+                            ((Date.now() - this.state.time) % 60000) /
+                            1000
+                        ).toFixed(0)}
+                </h2>
+                <Link className="btn btn-success col-3" to="/">
+                    Вернуться в главное меню
+                </Link>
             </div>
         );
     }
