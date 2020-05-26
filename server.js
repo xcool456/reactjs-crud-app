@@ -20,7 +20,7 @@ oApp.use(cors())
 
 // create  NEDB datastore
 var datastore1 = new nedb({
-    filename: "./db.dll",
+    filename: "./db1.dll",
     autoload: true,
     afterSerialization(plaintext) {
       const iv = crypto.randomBytes(16);
@@ -39,6 +39,27 @@ var datastore1 = new nedb({
       return plaintextBytes.toString();
     },
   });
+
+var datastore3 = new nedb({
+    filename: "./db2.dll",
+    autoload: true,
+    afterSerialization(plaintext) {
+        const iv = crypto.randomBytes(16);
+        const aes = crypto.createCipheriv(algorithm, key, iv);
+        let ciphertext = aes.update(plaintext);
+        ciphertext = Buffer.concat([iv, ciphertext, aes.final()]);
+        return ciphertext.toString("base64");
+    },
+    beforeDeserialization(ciphertext) {
+        const ciphertextBytes = Buffer.from(ciphertext, "base64");
+        const iv = ciphertextBytes.slice(0, 16);
+        const data = ciphertextBytes.slice(16);
+        const aes = crypto.createDecipheriv(algorithm, key, iv);
+        let plaintextBytes = Buffer.from(aes.update(data));
+        plaintextBytes = Buffer.concat([plaintextBytes, aes.final()]);
+        return plaintextBytes.toString();
+    },
+});
 
 var datastore2 = new nedb({
     filename: "./settings.dll",
@@ -62,7 +83,8 @@ var datastore2 = new nedb({
 });
 // create rest api router and connect it to datastore  
 var restApi = expressNedbRest();
-restApi.addDatastore('db', datastore1);
+restApi.addDatastore('db1', datastore1);
+restApi.addDatastore('db2', datastore3);
 restApi.addDatastore('settings', datastore2);
 
 // setup express server to serve rest service

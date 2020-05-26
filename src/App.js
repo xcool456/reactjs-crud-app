@@ -1,7 +1,6 @@
 import React from 'react';
 import Questions from './edit-tests/Questions';
 import NewQuestion from './edit-tests/NewQuestion';
-import QuestionView from './edit-tests/QuestionView';
 
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import MainMenu from './main/MainMenu';
@@ -16,21 +15,24 @@ class App extends React.Component {
         this.state = {
             error: null,
             isLoaded: false,
-            items: [],
+            items: {},
             selectedQuestions: [],
             date: '',
             settings: {},
         };
     }
 
-    getDb() {
-        fetch('http://localhost:8080/db')
+    getDb(dbName) {
+        fetch(`http://localhost:8080/${dbName}`)
             .then((res) => res.json())
             .then(
                 (result) => {
                     this.setState({
                         isLoaded: true,
-                        items: result,
+                        items: {
+                            ...this.state.items,
+                            [dbName]: result,
+                        },
                     });
                 },
                 (error) => {
@@ -39,7 +41,7 @@ class App extends React.Component {
                         error,
                     });
                 }
-            )
+            );
     }
 
     getSettings = () => {
@@ -68,15 +70,17 @@ class App extends React.Component {
                     });
                 }
             )
-            .then(() => this.generateQuiz(this.state.settings.countOfQuestion.value));
+            .then(() => this.generateQuiz());
     };
 
-    generateQuiz = (amount = 10, questionList = this.state.items) => {
+    generateQuiz = (questionList = 'db1') => {
+        questionList = this.state.items[questionList];
+
         let usedQuestions = [];
         let questionSet = [];
         let questionListLength = questionList.length;
 
-        for (let i = 0; i < amount; ) {
+        for (let i = 0; i < this.state.settings.countOfQuestion.value; ) {
             let randomQuestionIndex = Math.floor(
                 Math.random() * questionListLength
             );
@@ -92,16 +96,10 @@ class App extends React.Component {
         });
     };
 
-    updateItemsAfterDelete(id) {
-        this.setState({
-            items: this.state.items.filter((prod) => prod._id !== id),
-        });
-    }
-
     componentDidMount() {
-        this.getDb();
+        this.getDb('db1');
+        this.getDb('db2');
         this.getSettings();
-
 
         // fetch("http://localhost:8080/settings", {
         //     method: "POST",
@@ -125,7 +123,10 @@ class App extends React.Component {
                 <BrowserRouter>
                     <Switch>
                         <Route exact path="/">
-                            <MainMenu items={this.state.items} settings={this.state.settings}/>
+                            <MainMenu
+                                settings={this.state.settings}
+                                updateQuiz={this.generateQuiz}
+                            />
                         </Route>
                         <Route
                             path="/test/:id"
@@ -136,7 +137,8 @@ class App extends React.Component {
                                         this.state.selectedQuestions
                                     }
                                     countOfQuestions={
-                                        this.state.settings.countOfQuestion.value
+                                        this.state.settings.countOfQuestion
+                                            .value
                                     }
                                     location={location.search}
                                     settings={this.state.settings}
@@ -146,7 +148,10 @@ class App extends React.Component {
                         <Route
                             path="/finish"
                             render={({ location }) => (
-                                <FinishTest location={location.search} />
+                                <FinishTest
+                                    location={location.search}
+                                    updateQuiz={this.generateQuiz}
+                                />
                             )}
                         />
                         <Route
@@ -158,7 +163,10 @@ class App extends React.Component {
                         <Route
                             path="/edit-settings"
                             render={({ location }) => (
-                                <EditSettings onUpdate={() => this.getSettings()} location={location.search} />
+                                <EditSettings
+                                    onUpdate={() => this.getSettings()}
+                                    location={location.search}
+                                />
                             )}
                         />
                         <div className="questions-edit">
@@ -178,26 +186,12 @@ class App extends React.Component {
                                 </div>
                             </div>
                             <Route path="/questions">
-                                <Questions
-                                    items={this.state.items}
-                                    onUpdate={(i) =>
-                                        this.updateItemsAfterDelete(i)
-                                    }
-                                />
+                                <Questions items={this.state.items['db1']} />
                             </Route>
                             <Route
                                 path="/new-question"
                                 render={({ location }) => (
-                                    <NewQuestion
-                                        onUpdate={() => this.getDb()}
-                                        location={location.search}
-                                    />
-                                )}
-                            />
-                            <Route
-                                path="/question-view/:id"
-                                render={({ match }) => (
-                                    <QuestionView id={match.params.id} />
+                                    <NewQuestion location={location.search} />
                                 )}
                             />
                         </div>

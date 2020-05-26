@@ -50,7 +50,7 @@ class FinishTest extends React.Component {
     };
 
     componentDidMount() {
-        // this.sendAnswers();
+        this.sendAnswers();
     }
 
     render() {
@@ -87,7 +87,11 @@ class FinishTest extends React.Component {
                             1000
                         ).toFixed(0)}
                 </h2>
-                <Link className="btn btn-success col-3" to="/">
+                <Link
+                    className="btn btn-success col-3"
+                    to="/"
+                    onClick={() => this.props.updateQuiz()}
+                >
                     Вернуться в главное меню
                 </Link>
             </div>

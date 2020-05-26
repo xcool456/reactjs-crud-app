@@ -12,6 +12,7 @@ class MainMenu extends React.Component {
             group: '',
             show: false,
             password: '',
+            theme:'db1'
         };
     }
 
@@ -28,6 +29,9 @@ class MainMenu extends React.Component {
 
     handleChange = (event) => {
         const { name, value } = event.target;
+        if (name == 'theme') {
+            this.props.updateQuiz(value)
+        }
         this.setState({
             [name]: value,
         });
@@ -48,6 +52,7 @@ class MainMenu extends React.Component {
                             id="fio"
                             name="fio"
                             onChange={this.handleChange}
+                            autocomplete="off"
                             value={this.state.fio}
                         />
                     </div>
@@ -60,8 +65,18 @@ class MainMenu extends React.Component {
                             id="group"
                             name="group"
                             onChange={this.handleChange}
+                            autocomplete="off"
                             value={this.state.group}
                         />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-12 font-weight-bold">
+                        <label htmlFor="theme">Тема теста: </label>
+                        <select name="theme" onChange={this.handleChange} value={this.state.value} className="form-control">
+                            <option value="db1">Язык JavaScript</option>
+                            <option value="db2">DOM, работа со страницей</option>
+                        </select>
                     </div>
                 </div>
                 <div className="row">
